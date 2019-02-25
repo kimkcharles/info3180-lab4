@@ -1,3 +1,29 @@
 body {
     padding-top: 5rem;
 }
+
+.wrapper{
+    min-width: 630px;
+}
+
+
+.wrapper ul {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+    display:grid;
+    grid-template-columns: auto auto auto;
+}
+
+.wrapper li {
+    display: inline-block;
+    vertical-align: top;
+    width: 32%;
+    margin: 5px;
+    
+}
+
+.wrapper img{
+    width:200px;
+    height:200px;
+}
