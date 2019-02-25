@@ -11,6 +11,23 @@ from werkzeug.utils import secure_filename
 
 from app.forms import UploadForm
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTS']
+
+def get_uploaded_images():
+    list_of_files = []
+    for root,subdir,files in list(os.walk('app/static/uploads')):
+        for file in files:
+            list_of_files.append(file)
+
+    """
+    images = [file for file in list_of_files]
+    
+    """
+    
+    images = [file for file in list_of_files  if allowed_file(file)]
+    return images
 
 ###
 # Routing for your application.
@@ -36,11 +53,11 @@ def upload():
     # Instantiate your form class
     form = UploadForm()
     
-    # if request.method == 'GET' and form.validate_on_submit:
-    #     return render_template('upload.html', form = form)
+    if request.method == 'GET' and form.validate_on_submit:
+        return render_template('upload.html', form = form)
     
     # Validate file upload on submit
-    if request.method == 'POST':
+    if request.method == 'POST'  and form.validate_on_submit:
         # Get file data and save to your uploads folder
         file = form.upload.data
         filename = secure_filename(file.filename)
@@ -52,6 +69,16 @@ def upload():
     return render_template('upload.html', form = form)
 
 
+@app.route('/files', methods=['POST', 'GET'])
+def files():
+    """Render website's files page"""
+    if not session.get('logged_in'):
+        abort(401)
+    else:
+        return render_template('files.html', uploaded_images = get_uploaded_images())
+    
+    
+    
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     error = None
